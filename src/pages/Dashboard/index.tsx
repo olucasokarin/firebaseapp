@@ -31,33 +31,33 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const reference = database().ref(`${user.uid}/posts`);
 
-    let postis: Post[] = [];
+    let addedPosts: Post[] = [];
 
     reference.on('child_added', (snapshot: any) => {
-      postis.push(snapshot.val());
-      // console.log(postis);
-      setPosts(postis);
+      addedPosts.push(snapshot.val());
+      // console.log(addedPosts);
+      setPosts(addedPosts);
     });
 
     const valueChange = reference.on('child_changed', (snapshot: any) => {
       console.log(snapshot.val());
       //tentar return com map
 
-      const updatedPosts = postis.map((post) => {
+      const updatedPosts = addedPosts.map((post) => {
         if (post.uid === snapshot.key) return snapshot.val();
         return post;
       });
 
-      postis = updatedPosts.slice();
-      setPosts(postis);
+      addedPosts = updatedPosts.slice();
+      setPosts(addedPosts);
       console.log(updatedPosts);
     });
 
     reference.on('child_removed', (snapshot: any) => {
-      const filteredPosts = postis.filter(post => post.uid !== snapshot.key);
-      postis = filteredPosts.slice();
+      const filteredPosts = addedPosts.filter(post => post.uid !== snapshot.key);
+      addedPosts = filteredPosts.slice();
 
-      setPosts(postis)
+      setPosts(addedPosts)
     })
 
     return () => reference.off('child_changed', valueChange);
@@ -81,13 +81,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* <RectButton
-        activeOpacity={0.7}
-        onPress={handleAdd}
-        style={styles.touchableOpacityStyle}>
-       <Text>more</Text>
-
-      </RectButton> */}
 
       <RectButton
         activeOpacity={0.7}
